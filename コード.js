@@ -35,12 +35,24 @@ function csvDialog() {
 }
 
 /**
- * アップロード処理
+ * シートにデータを貼り付ける
  */
 function uploadProcess(formObject) {
+  // データを取得
   var formBlob = formObject.myFile;
   var csvText  = formBlob.getDataAsString("UTF-16LE"); // 文字コード指定
   var values   = Utilities.parseCsv(csvText, "\t");    // タブ区切り（tsv）
 
-  SpreadsheetApp.getActiveSheet().getRange(1, 1, values.length, values[0].length).setValues(values);
+  // 貼り付け先を取得
+  var sheet         = SpreadsheetApp.getActiveSheet();
+  var dataRange     = sheet.getDataRange();
+  var currentValues = dataRange.getValues();
+  var lastIndex     = currentValues.length;
+
+  // （重複していれば）見出しは除く
+  if (lastIndex !== 0) values.shift();
+
+  // 貼り付け
+  var pasteRange = sheet.getRange(lastIndex + 1, 1, values.length, values[0].length);
+  pasteRange.setValues(values);
 }
