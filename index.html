@@ -2,20 +2,23 @@
 <html>
   <head>
     <base target="_top">
-    <!-- フォームからデータを取り出す処理 -->
     <script>
-      // アップロードボタンが押された時の処理
+      /**
+       * アップロードボタンが押された時の処理
+       */
       function csvUpload(formObject) {
+        // アップロード用のダイアログを表示
         google.script.run.withSuccessHandler(closeDialog)
                          .uploadProcess(formObject);
 
-        // フォームを非表示
+        // 読み込み中はメッセージのみ表示
         document.getElementById('myForm').style.display = 'none';
-        // 処理中の文字を表示
         document.getElementById('message').innerHTML = 'インポート中...';
       }
       
-      // 処理が終わった時にダイアログを閉じる
+      /**
+       * 処理が終わったらダイアログを閉じる
+       */
       function closeDialog() {
         google.script.host.close();
       }
