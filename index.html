@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <!-- フォームからデータを取り出す処理 -->
+    <script>
+      // アップロードボタンが押された時の処理
+      function csvUpload(formObject) {
+        google.script.run.withSuccessHandler(closeDialog)
+                         .uploadProcess(formObject);
+
+        // フォームを非表示
+        document.getElementById('myForm').style.display = 'none';
+        // 処理中の文字を表示
+        document.getElementById('message').innerHTML = 'インポート中...';
+      }
+      
+      // 処理が終わった時にダイアログを閉じる
+      function closeDialog() {
+        google.script.host.close();
+      }
+    </script>
+  </head>
+
+  <body>
+    <form id='myForm'>
+      <input name="myFile" type="file" />
+      <button onclick="csvUpload(this.parentNode);">インポート</button> 
+    </form>
+    <div id='message'></div>
+ </body>
+</html>
