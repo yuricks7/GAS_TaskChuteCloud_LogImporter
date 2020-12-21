@@ -82,6 +82,7 @@ function setColors_(values) {
     // if (header === '分類') continue;
     if (mode === '') break;
 
+//    colors.unshift(modeToColor_(modes[i])); // 順番は変わらず、色だけ変わる…
     colors.push(modeToColor_(modes[i]));
   }
 
