@@ -23,7 +23,7 @@ function ChangeChartColors() {
 // */
 //function InsertNewChart() {
 //  const ss         = SpreadsheetApp.getActive();
-//  const sheet      = ss.getSheetByName('Inflows(conv)');
+//  const sheet      = ss.getSheetByName('chart');
 //  const sheetRange = sheet.getDataRange();
 //  const values     = sheetRange.getValues();
 //
@@ -124,7 +124,7 @@ function modeToColor_(mode) {
     darkgray : 'darkgray',
     red      : '#ff0000',
     white    : '#ffffff',
-    lightBlue: '#effafc',
+    lightBlue: '#edf8fa',
   };
 
   // モードの番号ごとに変える
@@ -161,9 +161,9 @@ function modeToColor_(mode) {
     case hasKeyword('91.'): return colors.muscat; // 休憩
 
     // 非アクティブ時間
-    case hasKeyword('だらだら'): return colors.red;  // 強調（ズレて効いてない）
-    case hasKeyword('99.'):     return colors.darkgray; // （ズレて効いてない）
+    case hasKeyword('だらだら'): return colors.red;    // 強調（ズレて効いてない）
+    case hasKeyword('99.'):     return colors.lightgray; // （ズレて効いてない）
       
-    default: return colors.lightgray;
+    default: return colors.darkgray;
   }
 }
