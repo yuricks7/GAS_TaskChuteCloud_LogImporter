@@ -42,6 +42,9 @@ function ChangeChartColors() {
 
 /**
  * グラフをカスタマイズ
+ * 
+ * @param {object}  builder
+ * @param {[][]} values
  */
 function setOptions_(builder, values) {
   // 系列の名前
@@ -68,22 +71,28 @@ function setOptions_(builder, values) {
 
 /**
  * 系列の色をまとめて配列化
+ * 
+ * @param {[][]} values
  */
 function setColors_(values) {
   var colors = [];
-  const headers = values[0];
-  const modes   = values[1];
+  var color  = '';
+  const modes = values[1];
 
   for (var i = 3; i < modes.length; i++) {
-    var header = headers[i];
-    var mode   = modes[i];
+    var mode = modes[i];
+    // console.log('mode: %s', mode); // ▼
 
-    // if (header === '実績 の SUM') continue;
-    // if (header === '分類') continue;
     if (mode === '') break;
+    if (mode === '総計') continue;
 
+    // キーワードから色を設定
+    color = modeToColor_(modes[i]);
+    if (!color) continue;
+
+    // 配列化
 //    colors.unshift(modeToColor_(modes[i])); // 順番は変わらず、色だけ変わる…
-    colors.push(modeToColor_(modes[i]));
+    colors.push(color);
   }
 
   return colors;
@@ -93,7 +102,7 @@ function setColors_(values) {
  * 系列の色を取得
  */
 function modeToColor_(mode) {
-  // console.log(mode);
+    // console.log('変換: %s', mode); // ▼
 
   // 関数を定義
   function hasKeyword(keyword) {
@@ -113,13 +122,18 @@ function modeToColor_(mode) {
     muscat   : '#b3cf82',
     lightgray: 'lightgray',
     darkgray : 'darkgray',
+    red      : '#ff0000',
+    white    : '#ffffff',
+    lightBlue: '#effafc',
   };
-  
+
   // モードの番号ごとに変える
   switch (true) {
-    case hasKeyword('【睡眠】'): return 'red'; // 目安
-    case hasKeyword('【活動】'): return 'white';
+    // 目安
+    case hasKeyword('【睡眠】'): return colors.lightBlue; // 目安
+    case hasKeyword('【活動】'): return colors.white;
 
+    // モード
     case hasKeyword('00.'): return colors.rose; // 金銭管理
 
     case hasKeyword('01.'): return colors.orange; // 計画
@@ -147,8 +161,8 @@ function modeToColor_(mode) {
     case hasKeyword('91.'): return colors.muscat; // 休憩
 
     // 非アクティブ時間
-    case hasKeyword('だらだら'): return 'red'; // 強調
-    case hasKeyword('99.'):     return colors.darkgray;
+    case hasKeyword('だらだら'): return colors.red;  // 強調（ズレて効いてない）
+    case hasKeyword('99.'):     return colors.darkgray; // （ズレて効いてない）
       
     default: return colors.lightgray;
   }
