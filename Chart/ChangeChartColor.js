@@ -81,8 +81,6 @@ function setColors_(values) {
 
   for (var i = 3; i < modes.length; i++) {
     var mode = modes[i];
-    // console.log('mode: %s', mode); // ▼
-
     if (mode === '') break;
     if (mode === '総計') continue;
 
@@ -91,8 +89,7 @@ function setColors_(values) {
     if (!color) continue;
 
     // 配列化
-//    colors.unshift(modeToColor_(modes[i])); // 順番は変わらず、色だけ変わる…
-    colors.push(color);
+    colors.push(color); // 系列は降順で入っている模様（unshiftにすると色だけ逆順に変わるのでカオスになる）
   }
 
   return colors;
@@ -100,16 +97,31 @@ function setColors_(values) {
 
 /**
  * 系列の色を取得
+ * 
+ * @param {string} mode
+ * 
+ * @return {string} カラーコード or 組み込みの色名
  */
 function modeToColor_(mode) {
-    // console.log('変換: %s', mode); // ▼
+  // 系列ごとに色を定義
+  const colorCodes = defineColorCodes();
+  const modeSeries = defineSeries(colorCodes);
 
-  // 関数を定義
-  function hasKeyword(keyword) {
-    return String(mode).indexOf(keyword) !== -1;
+  // 系列にあるモードの番号ごとに色を変える
+  var temp = {};
+  for (series in modeSeries) {
+    temp = modeSeries[series];
+    if (mode.indexOf(temp.key) !== -1) return temp.color;
   }
-  
-  const colors = {
+}
+
+/**
+ * グラフに使用する色を定義
+ * 
+ * @return {object} カラーコードか組み込みの色名を格納したオブジェクト
+ */
+function defineColorCodes() {
+  return {
     rose     : '#991250',
     orange   : 'orange',
     cherry   : '#d42759',
@@ -126,44 +138,48 @@ function modeToColor_(mode) {
     white    : '#ffffff',
     lightBlue: '#edf8fa',
   };
+}
 
-  // モードの番号ごとに変える
-  switch (true) {
-    // 目安
-    case hasKeyword('【睡眠】'): return colors.lightBlue; // 目安
-    case hasKeyword('【活動】'): return colors.white;
+/**
+ * 系列ごとの色を定義
+ * 
+ * @param {object} colorCodes
+ * 
+ * @return {object} 系列ごとのキーワードと色を格納したオブジェクト
+ */
+function defineSeries(colorCodes) {
+  return {
+    // 目安（背景代わり）
+    bgSleep:  { key: '【睡眠】', color: colorCodes.lightBlue, },
+    bgActive: { key: '【活動】', color: colorCodes.white, },
 
     // モード
-    case hasKeyword('00.'): return colors.rose; // 金銭管理
+    mdFinance:     { key: '00.', color: colorCodes.rose, },
 
-    case hasKeyword('01.'): return colors.orange; // 計画
-    case hasKeyword('02.'): return colors.orange; // 設定
-    case hasKeyword('03.'): return colors.rose;   // 移動
+    mdPlan:        { key: '01.', color: colorCodes.orange, },
+    mdSetting:     { key: '02.', color: colorCodes.orange, },
+    mdMove:        { key: '03.', color: colorCodes.rose, },
 
-    case hasKeyword('10.'): return colors.cherry; // MTG
-    case hasKeyword('11.'): return colors.cherry; // 交流
+    mdMtg:         { key: '10.', color: colorCodes.cherry, },
+    mdKouryu:      { key: '11.', color: colorCodes.cherry, },
 
-    case hasKeyword('20.'): return colors.plum; // 設計
-    case hasKeyword('21.'): return colors.plum; // コーディング
+    mdDesigning:   { key: '20.', color: colorCodes.plum, },
+    mdCoding:      { key: '21.', color: colorCodes.plum, },
 
-    case hasKeyword('30.'): return colors.grape; // フォーカス
+    mdFocus:       { key: '30.', color: colorCodes.grape, },
+    mdLearn:       { key: '40.', color: colorCodes.blueberry, },
 
-    case hasKeyword('40.'): return colors.blueberry; // 学習
+    mdSimpleTask:  { key: '50.', color: colorCodes.turquoise, },
 
-    case hasKeyword('50.'): return colors.turquoise; // 単純作業
+    mdHouseWork:   { key: '70.', color: colorCodes.emerald },
+    mdArrangement: { key: '71.', color: colorCodes.emerald, },
 
-    case hasKeyword('70.'): return colors.emerald; // 家事
-    case hasKeyword('71.'): return colors.emerald; // 整理整頓
+    mdHealthCare:  { key: '80.', color: colorCodes.leaf, },
 
-    case hasKeyword('80.'): return colors.leaf; // 健康管理
+    mdBreakTime:   { key: '90.', color: colorCodes.muscat, },
+    mdRestTime :   { key: '91.', color: colorCodes.muscat, },
 
-    case hasKeyword('90.'): return colors.muscat; // 小休憩
-    case hasKeyword('91.'): return colors.muscat; // 休憩
-
-    // 非アクティブ時間
-    case hasKeyword('だらだら'): return colors.red;    // 強調（ズレて効いてない）
-    case hasKeyword('99.'):     return colors.lightgray; // （ズレて効いてない）
-      
-    default: return colors.darkgray;
-  }
+    mdIdleTime:    { key: 'だらだら', color: colorCodes.red, },
+    mdSleep:       { key: '99.',    color: colorCodes.lightgray, },
+  };
 }
