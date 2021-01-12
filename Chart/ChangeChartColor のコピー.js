@@ -3,7 +3,7 @@
 //  */
 // function ChangeChartColors() {
 //   const ss         = SpreadsheetApp.getActive();
-//   const sheet      = ss.getSheetByName('chart');
+//   const sheet      = ss.getSheetByName('シート6');
 //   const sheetRange = sheet.getDataRange();
 //   const values     = sheetRange.getValues();
 
@@ -15,30 +15,8 @@
 
 //   // 設定を変更
 //   chart = setOptions_(builder, values);
-//   sheet.updateChart(chart);
+//   // sheet.updateChart(chart);
 // }
-
-// ///**
-// // * グラフを新規作成する
-// // */
-// //function InsertNewChart() {
-// //  const ss         = SpreadsheetApp.getActive();
-// //  const sheet      = ss.getSheetByName('chart');
-// //  const sheetRange = sheet.getDataRange();
-// //  const values     = sheetRange.getValues();
-// //
-// //  // 新規作成
-// //  var builder = sheet.newChart()
-// //               .addRange(sheet.getRange('A6:DB1000'))
-// //               .setPosition(1, 1, 8, 15)
-// //               .asColumnChart()　
-// //               .setOption('title', 'Inflows')
-// //               .setOption('titleTextStyle' , { color: '#545454', fontSize: 20 });
-// //  
-// //  // 設定を変更
-// //  chart = setOptions_(builder, values);
-// //  sheet.insertChart(chart);
-// //};
 
 // /**
 //  * グラフをカスタマイズ
@@ -48,25 +26,13 @@
 //  */
 // function setOptions_(builder, values) {
 //   // 系列の名前
-//   builder.setNumHeaders(2); // 1行目からの行数
-// //  
-// //  // 凡例
-// //  builder.setOption('legend', {
-// //      position : 'right',
-// //      textStyle: { color: '#545454', fontSize: 10 },
-// //  });
+//   builder.setNumHeaders(1); // 1行目からの行数
 
 //   // グラフの色
 //   // （配列で設定）
 //   builder.setColors(setColors_(values));
   
-// //  // （系列ごとに設定）
-// //  builder.setOption('series', {
-// //    0: { color: 'red' },
-// //    1: { color: 'red' }
-// //  })
-
-//   return builder.build();
+//   // return builder.build();
 // }
 
 // /**
@@ -77,19 +43,25 @@
 // function setColors_(values) {
 //   var colors = [];
 //   var color  = '';
-//   const modes = values[1];
+//   const headerRow = 1;
+//   const modes = values[headerRow - 1];
 
-//   for (var i = 3; i < modes.length; i++) {
+//   const firstModeCol = 3;
+//   for (var i = firstModeCol - 1; i < modes.length; i++) {
 //     var mode = modes[i];
 //     if (mode === '') break;
-//     if (mode === '総計') continue;
 
 //     // キーワードから色を設定
-//     color = modeToColor_(modes[i]);
+// console.log(mode);
+//     color = modeToColor_(mode);
+
+// if (!color) console.log('"color" is undefined...');
+// console.log(color);
 //     if (!color) continue;
 
 //     // 配列化
-//     colors.push(color); // 系列は降順で入っている模様（unshiftにすると色だけ逆順に変わるのでカオスになる）
+//     colors.unshift(color); // 系列が「昇順」の場合
+//     // colors.push(color); // 　〃　「降順」　〃　
 //   }
 
 //   return colors;
@@ -103,51 +75,37 @@
 //  * @return {string} カラーコード or 組み込みの色名
 //  */
 // function modeToColor_(mode) {
-//   // 系列ごとに色を定義
-//   const colorCodes = defineColorCodes();
-//   const modeSeries = defineSeries(colorCodes);
+//   const modeSeries = defineSeries();
+//   // const modeSeries = defineSeries(colorCodes);
+
+// // console.log('No.3');
+// // console.log(mode);
 
 //   // 系列にあるモードの番号ごとに色を変える
 //   var temp = {};
 //   for (series in modeSeries) {
 //     temp = modeSeries[series];
+
+// console.log('No.4');
+// if (!temp) console.log('"dic" is undefined...');
+// console.log(temp);
+// console.log(temp.key);
+// console.log(temp.color);
+
 //     if (mode.indexOf(temp.key) !== -1) return temp.color;
 //   }
 // }
 
 // /**
-//  * グラフに使用する色を定義
-//  * 
-//  * @return {object} カラーコードか組み込みの色名を格納したオブジェクト
-//  */
-// function defineColorCodes() {
-//   return {
-//     rose     : '#991250',
-//     orange   : 'orange',
-//     cherry   : '#d42759',
-//     plum     : 'plum',
-//     grape    : '#995686',
-//     blueberry: '#5678E9',
-//     turquoise: 'turquoise',
-//     emerald  : '#83f293',
-//     leaf     : '#439D29',
-//     muscat   : '#b3cf82',
-//     lightgray: 'lightgray',
-//     darkgray : 'darkgray',
-//     red      : '#ff0000',
-//     white    : '#ffffff',
-//     lightBlue: '#edf8fa',
-//   };
-// }
-
-// /**
 //  * 系列ごとの色を定義
-//  * 
-//  * @param {object} colorCodes
 //  * 
 //  * @return {object} 系列ごとのキーワードと色を格納したオブジェクト
 //  */
-// function defineSeries(colorCodes) {
+// function defineSeries() {
+//   // 系列ごとに色を定義
+//   const colorCodes = defineColorCodes();
+// // console.log('通りました');
+
 //   return {
 //     // 目安（背景代わり）
 //     bgSleep:  { key: '【睡眠】', color: colorCodes.lightBlue, },
@@ -181,5 +139,30 @@
 
 //     mdIdleTime:    { key: 'だらだら', color: colorCodes.red, },
 //     mdSleep:       { key: '99.',    color: colorCodes.lightgray, },
+//   };
+// }
+
+// /**
+//  * グラフに使用する色を定義
+//  * 
+//  * @return {object} カラーコードか組み込みの色名を格納したオブジェクト
+//  */
+// function defineColorCodes() {
+//   return {
+//     rose     : '#991250',
+//     orange   : 'orange',
+//     cherry   : '#d42759',
+//     plum     : 'plum',
+//     grape    : '#995686',
+//     blueberry: '#5678E9',
+//     turquoise: 'turquoise',
+//     emerald  : '#83f293',
+//     leaf     : '#439D29',
+//     muscat   : '#b3cf82',
+//     lightgray: 'lightgray',
+//     darkgray : 'darkgray',
+//     red      : '#ff0000',
+//     white    : '#ffffff',
+//     lightBlue: '#edf8fa',
 //   };
 // }
