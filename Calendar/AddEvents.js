@@ -1,156 +1,48 @@
 function ExportToCalendar() {
-  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet       = spreadsheet.getSheetByName('data');
-  var dataRange   = sheet.getDataRange();
-  var values      = dataRange.getValues();
-
-  const rows = {
-    header      : 2,
-    arrayFormula: 3,
-    firstData   : 4,
-    lastData    : values.length + 1,
-  };
-
-  const cols = {
-    actionDate:  1,
-    startTime : 23,
-    finishTime: 24,
-
-    isCopied: 25,
-
-    project: 28,
-    task   : 35,
-    mode   : 38,
-    link   : 44,
-    comment: 45,
-  };
+  const dataSheet = new DataSheet();
+  const rows   = dataSheet.rows;
+  const cols   = dataSheet.cols;
+  const values = dataSheet.values;
 
   // シートのデータをカレンダーに転記
-  const calendar = getCalendar_('行動ログ');
+  const logCalendar = new LogCalendar();
+  const calendar    = logCalendar.cal;
 
-  try { // 1度に転記する数が多いとエラーで止められるため、try~catch構文の中で処理する
+  // try { // 1度に転記する数が多いとエラーで止められるため、try~catch構文の中で処理する
     var isCopied = [];
     for (var i = rows.firstData - 1; i < values.length; i++) {
-
-      // レコード1件分のデータ
-      var rowData = values[i];
+      var rowValues = values[i];
 
       // レコードの内容によっては処理を飛ばす
-      if (rowData[cols.finishTime - 1] === '') {
+      if (rowValues[cols.finishTime - 1] === '') {
         isCopied.push('');
         continue;
       }
-      if (rowData[cols.isCopied - 1]) {
+
+      if (rowValues[cols.isCopied - 1]) {
         isCopied.push(true);
         continue;
       }
 
       // イベントを作成
-      var data  = {
-        startTime : rowData[cols.startTime  - 1],
-        finishTime: rowData[cols.finishTime - 1],
+      var logEvent = new LogEvent(calendar, rowValues, cols);
+      var content = logEvent.content;
+      var event   = logEvent.event;
 
-        project: rowData[cols.project - 1],
-        task   : rowData[cols.task    - 1],
-        mode   : rowData[cols.mode    - 1],
-        link   : rowData[cols.link    - 1],
-        comment: rowData[cols.comment - 1],
-      }
-
-      var event = createEvent_(calendar, data); // 重複があったら上書きするようにした方が良いかも？
-      if (data.mode) changeEventColor_(event, data.mode);
+      // var event = createEvent_(calendar, logContent); // 重複があったら上書きするようにした方が良いかも？
+      if (content.mode) changeEventColor_(event, content.mode);
+      // if (logContent.mode) changeEventColor_(event, logContent.mode);
 
       isCopied.push(true);
     }
 
-  } catch(e) {
+  // } catch(e) {
 
-  }
+  // }
 
   // 転記が完了したものは、シートに`true`を入力
   const arr2d = transpose_([isCopied]);
-  sheet.getRange(rows.firstData,  cols.isCopied, isCopied.length, 1).setValues(arr2d);
-}
-
-/**
- * カレンダーを取得
- * 
- * @param {string} name
- * 
- * @return {CalendarApp.Calendar} 記録先のカレンダー
- */
-function getCalendar_(name) {
-  const calendars = CalendarApp.getCalendarsByName(name);
-  return calendars[0];
-}
-
-/**
- * イベントの説明に記入する文章（ログの概要）をHTML形式で作成する
- * 
- * @param {object} data CSVでダウンロードしたデータ（を加工したもの）
- */
-function generateEventDescription_(data) {
-  // ログの概要（イベントの説明に記入）
-  const pre = '<b>【';
-  const suf = '】</b>';
-
-  var link    = switchIfUndefined_(data.link, '<a href="' + data.link + '">link</a>');
-  var comment = switchIfUndefined_(data.comment, data.comment);
-
-  var m = '';
-  m += pre + 'プロジェクト' + suf + data.project + '\n';
-  m += pre + '作業モード' + suf + data.mode + '\n';
-  m += pre + 'リンク' + suf + link + '\n';
-  m += pre + 'コメント' + suf + comment;
-
-  return m;
-}
-
-/**
- * 空欄なら`-`に置き換える
- * 
- * @param {string} src
- * @param {string} defaultStr
- * 
- * @return 置き換え後の値
- */
-function switchIfUndefined_(src, defaultStr) {
-  if (!src) {
-    return '-';
-
-  } else {
-    return defaultStr;
-
-  }
-}
-
-/**
- * 指定のカレンダーにイベントを作成する
- * 
- * @param {CalendarApp.Calendar} calendar
- * @param {object}               data
- * 
- * @return {CalendarApp.CalendarEvent (+1 overload)}
- */
-
-function createEvent_(calendar, data) {
-  // イベントのデータを設定
-  var eventData = {
-    title:  data.task,
-    start:  new Date(data.startTime),
-    finish: new Date(data.finishTime),
-    option: {
-      description: generateEventDescription_(data),
-    },
-  }
-
-  // イベントを作成
-  return calendar.createEvent(
-    eventData.title,
-    eventData.start,
-    eventData.finish,
-    eventData.option
-  );
+  dataSheet.sheet.getRange(rows.firstData,  cols.isCopied, isCopied.length, 1).setValues(arr2d);
 }
 
 /**
@@ -185,7 +77,7 @@ function modeToColor_(mode) {
 /**
  * 系列ごとの色を定義
  * 
- * @return {object} 系列ごとのキーワードと色を格納したオブジェクト
+ * @return {{}} 系列ごとのキーワードと色を格納したオブジェクト
  */
 function defineSeries_() {
   const eventColors = CalendarApp.EventColor;
