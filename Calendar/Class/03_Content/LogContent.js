@@ -15,21 +15,21 @@ var LogContent = function (rowValues, cols) {
   this.comment = rowValues[cols.comment - 1];
 }
 
-/**
- * ●●する
- *
- * @param {} 
- * @param {} 
- * @param {} 
- * @param {} 
- * @return {} 
- */
-LogContent.prototype.NEW_METHOD = function (argument) {
-  if (!argument) {
-    Logger.log('引き数がアリマセーン')
-  }
+// /**
+//  * ●●する
+//  *
+//  * @param {} 
+//  * @param {} 
+//  * @param {} 
+//  * @param {} 
+//  * @return {} 
+//  */
+// LogContent.prototype.NEW_METHOD = function (argument) {
+//   if (!argument) {
+//     Logger.log('引き数がアリマセーン')
+//   }
 
-  argument
+//   argument
 
-  return argument;
-};
+//   return argument;
+// };
