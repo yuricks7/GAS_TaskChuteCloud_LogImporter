@@ -2,15 +2,15 @@
  * イベントを管理するクラス
  *
  * @param {CalendarApp.Calendar} calendar 記録先のカレンダー
- * @param {{}}                   content  1行分のデータ
+ * @param {LogContent}           logContent  1行分のデータ
  */
-var LogEvent = function (calendar, content) {
-  this.calendar = calendar;
-  this.content  = content;
+var LogEvent = function (calendar, logContent) {
+  this.calendar   = calendar;
+  this.logContent = logContent;
 
   // 可読性を考えて、初期化時点ではイベント作成しない
   this.event = {};
-  // this.event = this.create(this.calendar, this.content);
+  // this.event = this.create(this.calendar, this.logContent);
 }
 
 /**
@@ -19,16 +19,16 @@ var LogEvent = function (calendar, content) {
  * @return {CalendarApp.CalendarEvent}
  */
 LogEvent.prototype.create = function() {
-  var content = this.content;
+  var logContent = this.logContent;
   var details = {
-    description: this._generateEventDescription(content),
+    description: this._toDescriptionHtml(logContent),
   };
 
   // イベントを作成
   this.event = this.calendar.createEvent(
-    content.task,
-    new Date(content.startTime),
-    new Date(content.finishTime),
+    logContent.task,
+    new Date(logContent.startTime),
+    new Date(logContent.finishTime),
     details
   );
 
@@ -37,22 +37,26 @@ LogEvent.prototype.create = function() {
 
 /**
  * イベントの説明に記入する文章（ログの概要）をHTML形式で作成する
- * 
- * @param {{}} data CSVでダウンロードしたデータ（を加工したもの）
+//  * 
+// //  * @param {LogContent} logContent  1行分のデータ
+
+//  * @param {{}} data CSVでダウンロードしたデータ（を加工したもの）
  */
-LogEvent.prototype._generateEventDescription = function(data) {
+LogEvent.prototype._toDescriptionHtml = function() {
+  var data = this.logContent;
+
   // ログの概要（イベントの説明に記入）
   const pre = '<b>【';
   const suf = '】</b>';
 
-  var link    = this._switchIfUndefined(data.link,    '<a href="' + data.link + '">link</a>');
-  var comment = this._switchIfUndefined(data.comment, data.comment);
+  var link    = this._replaceIfUndefined(data.link,    '<a href="' + data.link + '">link</a>');
+  var comment = this._replaceIfUndefined(data.comment, data.comment);
 
   var m = '';
   m += pre + 'プロジェクト' + suf + data.project + '\n';
-  m += pre + '作業モード' + suf + data.mode + '\n';
-  m += pre + 'リンク' + suf + link + '\n';
-  m += pre + 'コメント' + suf + comment;
+  m += pre + '作業モード'   + suf + data.mode + '\n';
+  m += pre + 'リンク'      + suf + link + '\n';
+  m += pre + 'コメント'     + suf + comment;
 
   return m;
 }
@@ -65,7 +69,7 @@ LogEvent.prototype._generateEventDescription = function(data) {
  * 
  * @return 置き換え後の値
  */
-LogEvent.prototype._switchIfUndefined = function(src, defaultStr) {
+LogEvent.prototype._replaceIfUndefined = function(src, defaultStr) {
   if (!src) {
     return '-';
 
@@ -79,7 +83,7 @@ LogEvent.prototype._switchIfUndefined = function(src, defaultStr) {
  * モードの番号ごとにイベントの色を設定する
  */
 LogEvent.prototype.changeColor = function() {
-  var mode  = this.content.mode;
+  var mode  = this.logContent.mode;
   var color = this._modeToColor(mode);
   this.event.setColor(color);
 }
@@ -90,7 +94,7 @@ LogEvent.prototype.changeColor = function() {
  * @return {string} カラーコード or 組み込みの色名
  */
 LogEvent.prototype._modeToColor = function() {
-  var mode = this.content.mode;
+  var mode = this.logContent.mode;
 
   // 系列ごとに色を定義
   const modeColors = this._defineModeColors();

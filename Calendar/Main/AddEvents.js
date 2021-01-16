@@ -66,7 +66,7 @@ function ExportToCalendar() {
 
       } else {
         // 何故かIDEにメソッドが認識されないけど動く模様…（メンバーが多すぎる？）
-        actionLog.add(logContent).changeColor(mode);
+        actionLog.add(logContent).changeColor();
 
       }
 
