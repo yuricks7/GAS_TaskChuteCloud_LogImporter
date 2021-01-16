@@ -3,27 +3,21 @@
  */
 function testMode() {
   const days = [
+    '2021/01/10 00:00:00',
     '2021/01/11 00:00:00',
-    '2021/01/12 00:00:00'
+    '2021/01/12 00:00:00',
   ]
 
-  // 関数
-  function deleteAll(calendar) {
-    for (var d = 0; d < days.length; d++) {
-      var testDate = new Date(days[d]);
-      var events = calendar.getEventsForDay(testDate);
-      for (var i = 0; i < events.length; i++) {
-        events[i].deleteEvent();
-      }
+  // まとめて削除
+  function deleteAll(name) {
+    const logCalendar = new LogCalendar(name);
+    for (var i = 0; i < days.length; i++) {
+      logCalendar.deleteAll(days[i]);
     }
   }
 
-  // まとめて削除
-  const actionLog = new LogCalendar('行動ログ');
-  deleteAll(actionLog.calendar);
-
-  const sleepLog = new LogCalendar('睡眠ログ');
-  deleteAll(sleepLog.calendar);
+  deleteAll('行動ログ');
+  deleteAll('睡眠ログ');
 }
 
 /**

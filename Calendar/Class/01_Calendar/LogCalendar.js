@@ -25,3 +25,18 @@ LogCalendar.prototype.add = function(logContent) {
 
   return eventLog;
 };
+
+/**
+ * 指定日のイベントをすべて削除する
+ * 
+ * - 日付は`yyyy/mm/dd hh:mm:ss`形式で渡すこと。
+ * 
+ * @param {String} date 日付（`yyyy/mm/dd hh:mm:ss`形式）
+ */
+LogCalendar.prototype.deleteAll = function(date) {
+  var testDate = new Date(date);
+  var events = this.calendar.getEventsForDay(testDate);
+  for (var i = 0; i < events.length; i++) {
+    events[i].deleteEvent();
+  }
+}
