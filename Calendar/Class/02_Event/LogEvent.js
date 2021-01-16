@@ -16,12 +16,12 @@ var LogEvent = function (calendar, logContent) {
 /**
  * 指定のカレンダーにイベントを作成する
  * 
- * @return {CalendarApp.CalendarEvent}
+ * @return {LogEvent}
  */
 LogEvent.prototype.create = function() {
   var logContent = this.logContent;
   var details = {
-    description: this._toDescriptionHtml(logContent),
+    description: this._toDescriptionHtml(),
   };
 
   // イベントを作成
@@ -32,7 +32,7 @@ LogEvent.prototype.create = function() {
     details
   );
 
-  return this.event;
+  return this;
 }
 
 /**
@@ -87,12 +87,7 @@ LogEvent.prototype._replaceIfUndefined = function(src, defaultStr) {
  */
 LogEvent.prototype.changeColor = function() {
   var color = this._modeToColor(this.logContent.mode);
-
-  try {
-    this.event.setColor(color);
-  } catch(e) {
-    
-  }
+  this.event.setColor(color);
 }
 
 /**

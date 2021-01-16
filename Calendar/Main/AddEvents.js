@@ -2,29 +2,28 @@
  * テスト
  */
 function testMode() {
-  // try {
-  //   ExportToCalendar();
+  const days = [
+    '2021/01/11 00:00:00',
+    '2021/01/12 00:00:00'
+  ]
 
-  // } catch(e) {
-
-  // }
-
-  const actionLog = new LogCalendar('行動ログ');
-  const actionCal = actionLog.calendar;
-
-  // まとめて削除
-  const testDate = new Date('2021/01/12 00:00:00');
-  const events = actionCal.getEventsForDay(testDate);
-
-  // console.log(events.length);
-  for (var i = 0; i < events.length; i++) {
-    events[i].deleteEvent();    
+  // 関数
+  function deleteAll(calendar) {
+    for (var d = 0; d < days.length; d++) {
+      var testDate = new Date(days[d]);
+      var events = calendar.getEventsForDay(testDate);
+      for (var i = 0; i < events.length; i++) {
+        events[i].deleteEvent();
+      }
+    }
   }
 
-  // const  sleepLog = new LogCalendar('睡眠ログ');
-  // const  sleepCal =  sleepLog.calendar;
+  // まとめて削除
+  const actionLog = new LogCalendar('行動ログ');
+  deleteAll(actionLog.calendar);
 
-  // ExportToCalendar();
+  const sleepLog = new LogCalendar('睡眠ログ');
+  deleteAll(sleepLog.calendar);
 }
 
 /**
@@ -40,10 +39,7 @@ function ExportToCalendar() {
   const actionLog = new LogCalendar('行動ログ');
   const  sleepLog = new LogCalendar('睡眠ログ');
 
-  // const actionCal = actionLog.calendar;
-  // const  sleepCal =  sleepLog.calendar;
-
-  // try { // 1度に転記する数が多いとサーバーエラーで止められることがあるため、try~catch構文の中で処理する
+  try { // 1度に転記する数が多いとサーバーエラーで止められることがあるため、try~catch構文の中で処理する
     var isCopied = [];
     for (var i = rows.firstData - 1; i < values.length; i++) {
       var rowValues = values[i];
@@ -59,29 +55,47 @@ function ExportToCalendar() {
         continue;
       }
 
-      // モードにより色分けしながらイベントを作成する
-      // （重複があったら上書きするようにした方が良いかも？）
+      // 睡眠ログとそれ以外を分けて記録
       var logContent = new LogContent(rowValues, cols);
-      var mode       = logContent.mode;
-      if (!mode) {
-        actionLog.add(logContent);
+      switch (logContent.task) {
+        case '睡眠':
+          addLog(sleepLog, logContent);
+          break;
 
-      } else {
-        // 何故かIDEにメソッドが認識されないけど動く模様…（メンバーが多すぎる？）
-        actionLog.add(logContent).changeColor();
-
+        default:
+          addLog(actionLog, logContent);
+          break;
       }
 
       isCopied.push(true);
     }
 
-  // } catch(e) {
+  } catch(e) {
 
-  // }
+  }
 
   // 転記が完了したものは、シートに`true`を入力
   const arr2d = transpose_([isCopied]);
   dataSheet.sheet.getRange(rows.firstData,  cols.isCopied, isCopied.length, 1).setValues(arr2d);
+}
+
+/**
+ * モードにより色分けしながらイベントを作成する
+ * （重複があったら上書きするようにした方が良いかも？）
+ *
+ * @param {LogCalendar} logCalendar 内容
+ * @param {LogContent}  logContent 内容
+ */
+function addLog(logCalendar, logContent) {
+  var mode       = logContent.mode;
+  if (!mode) {
+    logCalendar.add(logContent);
+
+  } else {
+    // 何故かIDEにメソッドが認識されないけど動く模様…（メンバーが多すぎる？）
+    logCalendar.add(logContent).changeColor();
+
+  }
 }
 
 /**
