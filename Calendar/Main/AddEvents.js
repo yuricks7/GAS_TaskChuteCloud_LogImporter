@@ -9,20 +9,22 @@ function testMode() {
 
   // }
 
-  // const actionLog = new LogCalendar('行動ログ');
-  // const actionCal = actionLog.calendar;
+  const actionLog = new LogCalendar('行動ログ');
+  const actionCal = actionLog.calendar;
 
-  // // まとめて削除
-  // const testDate = new Date('2020/01/12 00:00:00');
-  // const events = actionCal.getEventsForDay(testDate);
-  // for (var i = 0; i < events.length; i++) {
-  //   events[i].deleteEvent();    
-  // }
+  // まとめて削除
+  const testDate = new Date('2021/01/12 00:00:00');
+  const events = actionCal.getEventsForDay(testDate);
+
+  // console.log(events.length);
+  for (var i = 0; i < events.length; i++) {
+    events[i].deleteEvent();    
+  }
 
   // const  sleepLog = new LogCalendar('睡眠ログ');
   // const  sleepCal =  sleepLog.calendar;
 
-  ExportToCalendar();
+  // ExportToCalendar();
 }
 
 /**
@@ -41,7 +43,7 @@ function ExportToCalendar() {
   // const actionCal = actionLog.calendar;
   // const  sleepCal =  sleepLog.calendar;
 
-  try { // 1度に転記する数が多いとサーバーエラーで止められることがあるため、try~catch構文の中で処理する
+  // try { // 1度に転記する数が多いとサーバーエラーで止められることがあるため、try~catch構文の中で処理する
     var isCopied = [];
     for (var i = rows.firstData - 1; i < values.length; i++) {
       var rowValues = values[i];
@@ -73,9 +75,9 @@ function ExportToCalendar() {
       isCopied.push(true);
     }
 
-  } catch(e) {
+  // } catch(e) {
 
-  }
+  // }
 
   // 転記が完了したものは、シートに`true`を入力
   const arr2d = transpose_([isCopied]);

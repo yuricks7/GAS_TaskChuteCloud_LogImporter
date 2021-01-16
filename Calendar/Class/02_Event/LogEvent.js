@@ -1,8 +1,8 @@
 /**
  * イベントを管理するクラス
  *
- * @param {CalendarApp.Calendar} calendar 記録先のカレンダー
- * @param {LogContent}           logContent  1行分のデータ
+ * @param {CalendarApp.Calendar} calendar   記録先のカレンダー
+ * @param {LogContent}           logContent 1行分のデータ
  */
 var LogEvent = function (calendar, logContent) {
   this.calendar   = calendar;
@@ -37,10 +37,6 @@ LogEvent.prototype.create = function() {
 
 /**
  * イベントの説明に記入する文章（ログの概要）をHTML形式で作成する
-//  * 
-// //  * @param {LogContent} logContent  1行分のデータ
-
-//  * @param {{}} data CSVでダウンロードしたデータ（を加工したもの）
  */
 LogEvent.prototype._toDescriptionHtml = function() {
   var data = this.logContent;
@@ -81,11 +77,22 @@ LogEvent.prototype._replaceIfUndefined = function(src, defaultStr) {
 
 /**
  * モードの番号ごとにイベントの色を設定する
+ * 
+ * @note
+ *  16進数(#ffffffなど)では指定できない模様…
+ * 
+ * 【参考】
+ *   Google Apps Script - googleカレンダーに予定（イベント）を登録する際に内容により色を指定したい。｜teratail
+ *   https://teratail.com/questions/186554
  */
 LogEvent.prototype.changeColor = function() {
-  var mode  = this.logContent.mode;
-  var color = this._modeToColor(mode);
-  this.event.setColor(color);
+  var color = this._modeToColor(this.logContent.mode);
+
+  try {
+    this.event.setColor(color);
+  } catch(e) {
+    
+  }
 }
 
 /**
@@ -107,7 +114,11 @@ LogEvent.prototype._modeToColor = function() {
 }
 
 /**
- * 系列ごとの色を定義
+ * モード番号ごとの色を定義
+ * 
+ * 【参考】
+ *   Enum EventColor  |  Apps Script  |  Google Developers
+ *   https://developers.google.com/apps-script/reference/calendar/event-color
  * 
  * @return {{}} 系列ごとのキーワードと色を格納したオブジェクト
  */
@@ -117,8 +128,8 @@ LogEvent.prototype._defineModeColors = function() {
   return {
     finance:     { key: '00.', color: eventColors.RED, },
 
-    plan:        { key: '01.', color: eventColors.ORANGE, },
-    setting:     { key: '02.', color: eventColors.ORANGE, },
+    plan:        { key: '01.', color: eventColors.YELLOW, },
+    setting:     { key: '02.', color: eventColors.YELLOW, },
     move:        { key: '03.', color: eventColors.RED, },
 
     mtg:         { key: '10.', color: eventColors.PALE_RED, },
@@ -127,15 +138,15 @@ LogEvent.prototype._defineModeColors = function() {
     designing:   { key: '20.', color: eventColors.MAUVE, }, // 藤色
     coding:      { key: '21.', color: eventColors.MAUVE, },
 
-    focus:       { key: '30.', color: eventColors.CYAN, },
+    focus:       { key: '30.', color: eventColors.MAUVE, },
     learn:       { key: '40.', color: eventColors.BLUE, },
 
     simpleTask:  { key: '50.', color: eventColors.PALE_BLUE, },
 
-    houseWork:   { key: '70.', color: eventColors.GREEN },
-    arrangement: { key: '71.', color: eventColors.GREEN, },
+    houseWork:   { key: '70.', color: eventColors.CYAN },
+    arrangement: { key: '71.', color: eventColors.CYAN, },
 
-    healthCare:  { key: '80.', color: eventColors.PALE_GREEN, },
+    healthCare:  { key: '80.', color: eventColors.GREEN, },
     breakTime:   { key: '90.', color: eventColors.PALE_GREEN, },
     restTime :   { key: '91.', color: eventColors.PALE_GREEN, },
 
