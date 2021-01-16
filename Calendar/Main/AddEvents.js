@@ -57,13 +57,18 @@ function ExportToCalendar() {
         continue;
       }
 
-      // イベントを作成
+      // モードにより色分けしながらイベントを作成する
+      // （重複があったら上書きするようにした方が良いかも？）
       var logContent = new LogContent(rowValues, cols);
-      var logEvent   = actionLog.add(logContent); // 重複があったら上書きするようにした方が良いかも？
+      var mode       = logContent.mode;
+      if (!mode) {
+        actionLog.add(logContent);
 
-      // モードにより色分けする
-      var mode = logContent.mode;
-      if (mode) logEvent.changeColor(mode); // 何故かメソッドがIDEに認識されないけど動く模様…
+      } else {
+        // 何故かIDEにメソッドが認識されないけど動く模様…（メンバーが多すぎる？）
+        actionLog.add(logContent).changeColor(mode);
+
+      }
 
       isCopied.push(true);
     }
