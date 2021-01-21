@@ -1,26 +1,4 @@
 /**
- * テスト
- */
-function testMode() {
-  const days = [
-    '2021/01/10 00:00:00',
-    '2021/01/11 00:00:00',
-    '2021/01/12 00:00:00',
-  ]
-
-  // まとめて削除
-  function deleteAll(name) {
-    const logCalendar = new LogCalendar(name);
-    for (var i = 0; i < days.length; i++) {
-      logCalendar.deleteAll(days[i]);
-    }
-  }
-
-  deleteAll('行動ログ');
-  deleteAll('睡眠ログ');
-}
-
-/**
  * メイン
  */
 function ExportToCalendar() {
@@ -29,39 +7,58 @@ function ExportToCalendar() {
   const cols   = dataSheet.cols;
   const values = dataSheet.values;
 
-  // シートのデータをカレンダーに転記
   const actionLog = new LogCalendar('行動ログ');
   const  sleepLog = new LogCalendar('睡眠ログ');
 
-  try { // 1度に転記する数が多いとサーバーエラーで止められることがあるため、try~catch構文の中で処理する
-    var isCopied = [];
-    for (var i = rows.firstData - 1; i < values.length; i++) {
-      var rowValues = values[i];
+  // シートのデータをカレンダーに転記
+  // 
+  // @note
+  //   1度に転記する数が多いとサーバーエラーで止められることがあるため、
+  //   途中終了しないようにtry~catch構文の中で処理する
+  //
+  const timer = new Timer();
+  timer.start();
 
-      // レコードの内容によっては処理を飛ばす
-      if (rowValues[cols.finishTime - 1] === '') {
-        isCopied.push('');
-        continue;
-      }
+  try {
 
-      if (rowValues[cols.isCopied - 1]) {
+    // 時限タイマーをセット
+    const LIMITED_TIME = 5.5 * 60 * 1000; // 少し余裕を持って5分半とする
+    var isCopied = []; // シート記録用
+
+    while (true) {
+
+      // 処理を開始
+      for (var i = rows.firstData - 1; i < values.length; i++) {
+        var rowValues = values[i];
+
+        // レコードの内容によっては処理を飛ばす
+        if (rowValues[cols.finishTime - 1] === '') {
+          isCopied.push('');
+          continue;
+        }
+
+        if (rowValues[cols.isCopied - 1]) {
+          isCopied.push(true);
+          continue;
+        }
+
+        // 睡眠ログとそれ以外を分けて記録
+        var logContent = new LogContent(rowValues, cols);
+        switch (logContent.task) {
+          case '睡眠':
+            addLog(sleepLog, logContent);
+            break;
+
+          default:
+            addLog(actionLog, logContent);
+            break;
+        }
+
         isCopied.push(true);
-        continue;
       }
 
-      // 睡眠ログとそれ以外を分けて記録
-      var logContent = new LogContent(rowValues, cols);
-      switch (logContent.task) {
-        case '睡眠':
-          addLog(sleepLog, logContent);
-          break;
-
-        default:
-          addLog(actionLog, logContent);
-          break;
-      }
-
-      isCopied.push(true);
+      console.log(timer.rap());
+      if (timer.getRapTime() > LIMITED_TIME) break;
     }
 
   } catch(e) {

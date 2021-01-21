@@ -1,3 +1,6 @@
+/**
+ * テスト
+ */
 function myFunction() {
   var dataSheet = new DataSheet();
 
@@ -7,6 +10,86 @@ function myFunction() {
 
 
 }
+
+/**
+ * テスト
+ */
+function testMode() {
+  const days = [
+    '2021/01/10 00:00:00',
+    '2021/01/11 00:00:00',
+    '2021/01/12 00:00:00',
+  ]
+
+  // まとめて削除
+  function deleteAllByDate(name) {
+    const logCalendar = new LogCalendar(name);
+    for (var i = 0; i < days.length; i++) {
+      logCalendar.deleteAllByDate(days[i]);
+    }
+  }
+
+  deleteAllByDate('行動ログ');
+  deleteAllByDate('睡眠ログ');
+
+  ExportToCalendar();
+}
+
+/**
+ * テスト
+ */
+function testMode_All() {
+  // まとめて削除
+  new LogCalendar('行動ログ').deleteAll();
+  new LogCalendar('睡眠ログ').deleteAll();
+
+  // ExportToCalendar();
+}
+
+/**
+ * テスト
+ */
+function testMode_02() {
+  const actionLog = new LogCalendar('行動ログ');
+  var events = actionLog.getAll();
+
+  for (var i = 0; i < events.length; i++) {
+    var event = events[i];
+    console.log('[Start] %s, [Title] %s', event.getStartTime(), event.getTitle());
+  }
+}
+
+/**
+ * テスト
+ */
+function testMode_03() {
+  const sleepLog     = new LogCalendar('睡眠ログ');
+  const testDateTime = new Date('2021/01/13 00:46');
+  const task         = '睡眠';
+
+  const hasSameLog = sleepLog.hasSameLog(testDateTime, task);
+  sleepLog.removeDuplicate(testDateTime, task);
+
+  console.log(hasSameLog);
+}
+
+/**
+ * テスト
+ */
+function testMode_04() {
+  const timer = new Timer();
+  timer.start();
+  timer.rap();
+
+  const LIMITED_TIME = 1 * 15 * 1000;
+  while (timer.getRapTime() < LIMITED_TIME) {
+    console.log(timer.rap());
+  }
+
+  console.log('Over 1 minute.');
+}
+
+
 
 function colors(){
   const eventColors = CalendarApp.EventColor;
