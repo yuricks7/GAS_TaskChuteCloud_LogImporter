@@ -1,3 +1,14 @@
+function debugPrint() {
+  const dataSheet = new DataSheet();
+  const rows   = dataSheet.rows;
+  const cols   = dataSheet.cols;
+  const values = dataSheet.values;
+
+  console.log(dataSheet.headerValues);
+
+  console.log(dataSheet.cols.startTime);
+}
+
 /**
  * メイン
  */
@@ -23,7 +34,7 @@ function ExportToCalendar() {
   //
   try {
 
-    var isCopied = []; // シート記録用
+    var isCopied = []; // シート記録用（→`true/false`ではなく`event id`の方が良いかも）
     for (var i = rows.firstData - 1; i < values.length; i++) {
       var rowValues = values[i];
 
@@ -42,11 +53,11 @@ function ExportToCalendar() {
       var logContent = new LogContent(rowValues, cols);
       switch (logContent.task) {
         case '睡眠':
-          addLog(sleepLog, logContent);
+          addLog_(sleepLog, logContent);
           break;
 
         default:
-          addLog(actionLog, logContent);
+          addLog_(actionLog, logContent);
           break;
       }
 
@@ -67,13 +78,13 @@ function ExportToCalendar() {
 }
 
 /**
- * モードにより色分けしながらイベントを作成する
+ * モードにより色分けしながらイベントを作成する  
  * （重複があったら上書きするようにした方が良いかも？）
  *
  * @param {LogCalendar} logCalendar 内容
  * @param {LogContent}  logContent 内容
  */
-function addLog(logCalendar, logContent) {
+function addLog_(logCalendar, logContent) {
   var mode       = logContent.mode;
   if (!mode) {
     logCalendar.add(logContent);

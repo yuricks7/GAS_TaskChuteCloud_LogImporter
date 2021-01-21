@@ -26,7 +26,7 @@ var LogCalendar = function(name) {
  */
 LogCalendar.prototype.add = function(logContent) {
   // 重複があれば、上書きするために予め消しておく
-  this.removeDuplicate(new Date(logContent.startTime), logContent.task);
+  this.removeDuplicated(new Date(logContent.startTime), logContent.task);
 
   var eventLog = new LogEvent(this.calendar, logContent);
   eventLog.create();
@@ -40,7 +40,7 @@ LogCalendar.prototype.add = function(logContent) {
  * @param {Date}   dateTime 指定日時のDateオブジェクト
  * @param {string} title    イベントのタイトル
  */
-LogCalendar.prototype.removeDuplicate = function(dateTime, title) {
+LogCalendar.prototype.removeDuplicated = function(dateTime, title) {
   if ( !this.hasSameLog(dateTime, title) ) return;
 
   var events = this.calendar.getEventsForDay(dateTime);
@@ -49,9 +49,9 @@ LogCalendar.prototype.removeDuplicate = function(dateTime, title) {
     if (event.getTitle() === title) {
 
       console.log('Title is duplicated.');
-      event.deleteEvent();
+      event.deleteEvent(); // 出来てない…
 
-      console.log(event.getStartTime());
+      // console.log(event.getStartTime());
       return;
     }
   }

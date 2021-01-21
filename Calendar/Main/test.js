@@ -16,18 +16,19 @@ function myFunction() {
  */
 function testMode_ByDate() {
   const days = [
-    '2021/01/11 00:00:00',
-    '2021/01/12 00:00:00',
-    '2021/01/13 00:00:00',
-    '2021/01/14 00:00:00',
-    '2021/01/15 00:00:00',
+    // '2021/01/10 00:00:00',
+    // '2021/01/11 00:00:00',
+    // '2021/01/12 00:00:00',
+    // '2021/01/13 00:00:00',
+    // '2021/01/14 00:00:00',
+    // '2021/01/15 00:00:00',
     '2021/01/16 00:00:00',
     '2021/01/17 00:00:00',
     '2021/01/18 00:00:00',
     '2021/01/19 00:00:00',
   ]
 
-  // まとめて削除
+  // 関数を定義
   function deleteAllByDate(name) {
     const logCalendar = new LogCalendar(name);
     for (var i = 0; i < days.length; i++) {
@@ -35,10 +36,11 @@ function testMode_ByDate() {
     }
   }
 
+  // まとめて削除
   deleteAllByDate('行動ログ');
   deleteAllByDate('睡眠ログ');
 
-  ExportToCalendar();
+  // ExportToCalendar();
 }
 
 /**
