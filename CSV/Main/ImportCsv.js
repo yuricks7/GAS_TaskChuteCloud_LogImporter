@@ -18,9 +18,15 @@
 
 /**
  * ダイアログを表示
+ * 
+ * - 【参考】
+ *   - CSSを適用する方法
+ *     - [GASでWebページを作るときにHTMLとCSSを別ファイルに記述する方法](https://tonari-it.com/gas-web-html-css-scriptlet/#toc2)
+ * 
  */
 function showImportDialog() {
-  var html = HtmlService.createHtmlOutputFromFile('CSV/Sub/Modal/client/index');
+  var html = HtmlService.createTemplateFromFile('CSV/Sub/Modal/client/index').evaluate();
+
   SpreadsheetApp.getUi().showModalDialog(html, 'CSVをインポート');
 }
 
