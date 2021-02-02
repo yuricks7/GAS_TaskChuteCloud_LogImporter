@@ -1,18 +1,19 @@
-function debugPrint() {
-  const dataSheet = new DataSheet();
-  const rows   = dataSheet.rows;
-  const cols   = dataSheet.cols;
-  const values = dataSheet.values;
-
-  console.log(dataSheet.headerValues);
-
-  console.log(dataSheet.cols.startTime);
-}
-
 /**
  * メイン
  */
 function ExportToCalendar() {
+  // 時限タイマーをセット
+  const timer = new Timer();
+  timer.setMax(5.5); // 少し余裕を持って5分半とする
+  timer.start();
+
+  // 処理中はポップアップでスピナーを表示
+  const ui = SpreadsheetApp.getUi();
+  const popUp   = new ModalPopUp(ui);
+  const htmlSrc = new HtmlSrc();
+  popUp.printProcessing(htmlSrc.path.onOutput);
+
+  // データを準備
   const dataSheet = new DataSheet();
   const rows   = dataSheet.rows;
   const cols   = dataSheet.cols;
@@ -20,11 +21,6 @@ function ExportToCalendar() {
 
   const actionLog = new LogCalendar('行動ログ');
   const  sleepLog = new LogCalendar('睡眠ログ');
-
-  // 時限タイマーをセット
-  const timer = new Timer();
-  timer.setMax(5.5); // 少し余裕を持って5分半とする
-  timer.start();
 
   // シートのデータをカレンダーに転記
   //
@@ -75,6 +71,9 @@ function ExportToCalendar() {
   // 転記が完了したものは、シートに`true`を入力
   const arr2d = transpose_([isCopied]);
   dataSheet.sheet.getRange(rows.firstData,  cols.isCopied, isCopied.length, 1).setValues(arr2d);
+
+  // 完了表示
+  popUp.printFinished(htmlSrc.path.finished);
 }
 
 /**

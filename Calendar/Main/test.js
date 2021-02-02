@@ -7,8 +7,17 @@ function myFunction() {
   console.log(dataSheet.cols.finishTime);
 
   console.log(dataSheet.cells(4, 1));
+}
 
+function debugPrint() {
+  const dataSheet = new DataSheet();
+  const rows   = dataSheet.rows;
+  const cols   = dataSheet.cols;
+  const values = dataSheet.values;
 
+  console.log(dataSheet.headerValues);
+
+  console.log(dataSheet.cols.startTime);
 }
 
 /**
