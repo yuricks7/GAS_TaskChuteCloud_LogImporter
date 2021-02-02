@@ -25,7 +25,8 @@
  * 
  */
 function showImportDialog() {
-  var html = HtmlService.createTemplateFromFile('CSV/Sub/Modal/client/index').evaluate();
+  var template = HtmlService.createTemplateFromFile('CSV/Sub/Modal/client/index');
+  var html     = template.evaluate(); // スクリプトレットを実行した上でHtmlOutputオブジェクトを取得する
 
   SpreadsheetApp.getUi().showModalDialog(html, 'CSVをインポート');
 }
@@ -35,21 +36,31 @@ function showImportDialog() {
  */
 function uploadProcess(formObject) {
   // データを取得
-  var formBlob = formObject.myFile;
-  var csvText  = formBlob.getDataAsString("UTF-16LE"); // 文字コード指定
-  var values   = Utilities.parseCsv(csvText, "\t");    // タブ区切り（tsv）
+  var formBlob  = formObject.myFile;
+  var csvText   = formBlob.getDataAsString("UTF-16LE"); // 文字コード指定
+  var csvValues = Utilities.parseCsv(csvText, "\t");    // タブ区切り（tsv）
 
   // 貼り付け先を取得
-  var sheet         = SpreadsheetApp.getActiveSheet();
-  var dataRange     = sheet.getDataRange();
-  var currentValues = dataRange.getValues();
-  var lastIndex     = currentValues.length;
+  var dataSheet = new DataSheet();
+  var lastIndex = dataSheet.values.length;
 
   // （重複していれば）見出しは除く
-  if (lastIndex !== 0) values.shift();
+  if (lastIndex !== 0) csvValues.shift();
 
   // 貼り付け
-  var pasteRange = sheet.getRange(4, 2, values.length, values[0].length);               // データ1行目から
-//  var pasteRange = sheet.getRange(lastIndex + 1, 1, values.length, values[0].length); // 最終行（アクティブ行 + 1）から
-  pasteRange.setValues(values);
+  var sheet = dataSheet.sheet;
+
+  // （データ1行目からの場合）
+  var pasteRange = sheet.getRange(
+        dataSheet.rows.firstData, dataSheet.cols.actionDate,
+        csvValues.length,         csvValues[0].length
+  );
+
+  // // （最終行（=アクティブ行 + 1）からの場合）
+  // var pasteRange = sheet.getRange(
+  //       lastIndex + 1,    1,
+  //       csvValues.length, csvValues[0].length
+  // );
+
+  pasteRange.setValues(csvValues);
 }
