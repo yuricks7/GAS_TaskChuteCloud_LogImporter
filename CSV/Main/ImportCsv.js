@@ -20,7 +20,7 @@
  * ダイアログを表示
  */
 function showImportDialog() {
-  var html = HtmlService.createHtmlOutputFromFile('CSV/index');
+  var html = HtmlService.createHtmlOutputFromFile('CSV/Sub/Modal/client/index');
   SpreadsheetApp.getUi().showModalDialog(html, 'CSVをインポート');
 }
 
@@ -43,7 +43,7 @@ function uploadProcess(formObject) {
   if (lastIndex !== 0) values.shift();
 
   // 貼り付け
-  var pasteRange = sheet.getRange(4, 1, values.length, values[0].length);               // データ1行目から
+  var pasteRange = sheet.getRange(4, 2, values.length, values[0].length);               // データ1行目から
 //  var pasteRange = sheet.getRange(lastIndex + 1, 1, values.length, values[0].length); // 最終行（アクティブ行 + 1）から
   pasteRange.setValues(values);
 }
