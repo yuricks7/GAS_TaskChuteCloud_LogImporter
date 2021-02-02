@@ -2,19 +2,20 @@
 <html>
   <head>
     <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons.css"/>
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <?!= HtmlService.createHtmlOutputFromFile('Calendar/Sub/Modal/client/css').getContent(); ?>
+    <!-- <script type="text/javascript" src="https://www.google.com/jsapi"></script> -->
   </head>
   <body>
-    <div style="vertical-align: center; text-align:center;">
-      <br> <!-- ←配置上の都合 --->
-      <img border="0" src="https://officeforest.org/wp/library/ProgressSpinner.gif">
-      <div style="font-size: 9pt;">
-        <p><b>カレンダーに転記しています．．．</b></p>
-        <p>
-          <b><span style="color: red; font-size: 10pt;">処理の終了まで、実行中のブラウザ・タブは<br>開いたままでお待ち下さい。</span></b><br>
-          <span>※最大6分程度かかります。</span>
-        </p>
+    <div class="container">
+      <img class="running" src="#"> <!-- 暫定的に… -->
+      <div class="message">
+        <h3>カレンダーに転記しています．．．</h3>
+        <p class="alert">処理の終了まで、実行中のブラウザ・タブは<br>開いたままでお待ち下さい。</span></p>
+        <p>※最大6分程度かかります。</p>
       </div>
+      <!-- <div class="btns">
+        <button id='btnOK' class='action' onClick='google.script.host.close()'>強制停止</button>
+      </div> -->
     </div>
   </body>
 </html>

@@ -2,18 +2,18 @@
 <html>
   <head>
     <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons.css"/>
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <?!= HtmlService.createHtmlOutputFromFile('Calendar/Sub/Modal/client/css').getContent(); ?>
+    <!-- <script type="text/javascript" src="https://www.google.com/jsapi"></script> -->
   </head>
   <body>
-    <div style="vertical-align: center; text-align:center;">
-      <br> <!-- ←配置上の都合 --->
-      <div style="font-size: 10pt;">
-        <p><b><span style="color: red;">転記が完了しました。</span></b></p>
+    <div class="container">
+      <div class="message">
+        <h3>転記が完了しました。</h3>
         <p>カレンダーをご確認ください。</p>
       </div>
-      <p>
+      <div class="btns">
         <button id='btnOK' class='action' onClick='google.script.host.close()'>閉じる</button>
-      </p>
+      </div>
     </div>
   </body>
 </html>

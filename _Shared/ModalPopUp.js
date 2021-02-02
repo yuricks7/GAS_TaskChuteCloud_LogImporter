@@ -9,8 +9,8 @@
  */
 var ModalPopUp = function(ui) {
   this.ui     = ui;
-  this.width  = 300;
-  this.height = 180;
+  this.width  = 360;
+  this.height = 240;
 }
 
 /**
@@ -20,11 +20,7 @@ var ModalPopUp = function(ui) {
  * @param {string} htmlPath ポップアップに使用するHTMLのソース
  */
 ModalPopUp.prototype.print = function(title, htmlPath) {
-    var html = HtmlService.createHtmlOutputFromFile(htmlPath)
-                          .setWidth( this.width)
-                          .setHeight(this.height);
-
-    this.ui.showModalDialog(html, title);
+  this.ui.showModalDialog(this._runScriptlet(htmlPath), title);
 };
 
 /**
@@ -33,11 +29,7 @@ ModalPopUp.prototype.print = function(title, htmlPath) {
  * @param {string} htmlPath ポップアップに使用するHTMLのソース
  */
 ModalPopUp.prototype.printProcessing = function(htmlPath) {
-    var html = HtmlService.createHtmlOutputFromFile(htmlPath)
-                          .setWidth( this.width)
-                          .setHeight(this.height);
-
-    this.ui.showModalDialog(html, '処理中');
+  this.ui.showModalDialog(this._runScriptlet(htmlPath), '処理中');
 };
 
 /**
@@ -46,21 +38,19 @@ ModalPopUp.prototype.printProcessing = function(htmlPath) {
  * @param {string} htmlPath ポップアップに使用するHTMLのソース
  */
 ModalPopUp.prototype.printFinished = function(htmlPath) {
-    var html = HtmlService.createHtmlOutputFromFile(htmlPath)
-                          .setWidth( this.width)
-                          .setHeight(this.height);
-
-    this.ui.showModalDialog(html, '処理完了');
+  this.ui.showModalDialog(this._runScriptlet(htmlPath), '処理完了');
 };
 
 /**
- * 終了メッセージ生成用の変数を作成する
- *
- * @return {string} ドキュメントの名前とURLを入れたJSON形式の文字列
+ * スクリプトレットを実行した上でHtmlOutputオブジェクトを取得する
+ * 
+ * @param {string} htmlPath ポップアップに使用するHTMLのソース
+ * 
+ * @return {HtmlService.HtmlOutput}
  */
-function getDocsInfoJson(){
-  var Props = new ProjectIds;
-  var array = [Props.docsUrl, Props.docsName];
-
-  return JSON.stringify(array);
-}
+ModalPopUp.prototype._runScriptlet = function(htmlPath) {
+  var template = HtmlService.createTemplateFromFile(htmlPath);
+  return template.evaluate()
+                 .setWidth( this.width)
+                 .setHeight(this.height);
+};
