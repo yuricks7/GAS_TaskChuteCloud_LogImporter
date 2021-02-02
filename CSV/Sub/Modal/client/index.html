@@ -2,7 +2,7 @@
 <html>
   <head>
     <base target="_top">
-    <?!= HtmlService.createHtmlOutputFromFile('css').getContent(); ?>
+    <?!= HtmlService.createHtmlOutputFromFile('CSV/Sub/Modal/client/css').getContent(); ?>
     <script>
       /**
        * アップロードボタンが押された時の処理
@@ -10,6 +10,7 @@
       function csvUpload(formObject) {
         // アップロード用のダイアログを表示
         google.script.run.withSuccessHandler(closeDialog)
+                         .withFailureHandler(printFailure)
                          .uploadProcess(formObject);
 
         // 読み込み中はメッセージのみ表示
@@ -18,23 +19,29 @@
       }
       
       /**
-       * 処理が終わったらダイアログを閉じる
+       * （成功）
        */
       function closeDialog() {
         google.script.host.close();
       }
+
+      /**
+       * （失敗）
+       */
+      function printFailure() {
+        alert('インポートに失敗しました…');
+        google.script.host.close();
+      }
+
     </script>
   </head>
 
   <body>
-    <span class="gas">テスト</span>
     <form id='myForm'>
       <input name="myFile" type="file" />
       <button onclick="csvUpload(this.parentNode);">インポート</button> 
     </form>
 
-
     <div id='message'></div>
-
  </body>
 </html>
