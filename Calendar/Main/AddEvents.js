@@ -29,19 +29,18 @@ function ExportToCalendar() {
   //   途中終了しないようにtry~catch構文の中で処理する
   //
   try {
-
-    var isCopied = []; // シート記録用（→`true/false`ではなく`event id`の方が良いかも）
+    var results = []; // シート記録用（→`true/false`ではなく`event id`の方が良いかも）
     for (var i = rows.firstData - 1; i < values.length; i++) {
       var rowValues = values[i];
 
       // レコードの内容によっては処理を飛ばす
       if (rowValues[cols.finishTime - 1] === '') {
-        isCopied.push('');
+        results.push('');
         continue;
       }
 
       if (rowValues[cols.isCopied - 1]) {
-        isCopied.push(true);
+        results.push(true);
         continue;
       }
 
@@ -57,7 +56,7 @@ function ExportToCalendar() {
           break;
       }
 
-      isCopied.push(true);
+      results.push(true);
 
       // 時間制限対策
       console.log(timer.rap());
@@ -69,8 +68,11 @@ function ExportToCalendar() {
   }
 
   // 転記が完了したものは、シートに`true`を入力
-  const arr2d = transpose_([isCopied]);
-  dataSheet.sheet.getRange(rows.firstData,  cols.isCopied, isCopied.length, 1).setValues(arr2d);
+  const arr2d = transpose_([results]);
+  dataSheet.sheet.getRange(rows.firstData,  cols.isCopied, results.length, 1).setValues(arr2d);
+
+  // 次のトリガーを設定しておく
+  if (dataSheet.rows.lastData - 3 - 1 > results.length) scheduleReRun_();
 
   // 完了表示
   popUp.printFinished(htmlSrc.path.finished);
@@ -116,4 +118,46 @@ function transpose_(src) {
       return r[c];
     });
   });
+}
+
+/**
+ * 3分後に再実行を予約しておく
+ */
+function scheduleReRun_() {
+  const trigger = new NextTrigger(ExportToCalendar.name, 3);
+  trigger.build();
+}
+
+function test() {
+  const arr01 = [
+    'yeah',
+    'fooo',
+    '',
+    'omg',
+    '',
+  ];
+
+  console.log(countBlanks(arr01)); // カウントは出来てる
+
+
+  const arr02 = [
+    true,
+    '',
+    false,
+    true,
+    '',
+  ];
+
+  console.log(countBlanks(arr02));
+}
+
+/**
+ * 空要素を数える
+ * 
+ * @param {Array}
+ * 
+ * @return {number}
+ */
+function countBlanks(arr) {
+  return arr.filter(function(element) { return element === '' }).length;
 }

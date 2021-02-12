@@ -1,7 +1,7 @@
 /**
  * テスト
  */
-function myFunction() {
+function debugPrint_01() {
   var dataSheet = new DataSheet();
 
   console.log(dataSheet.cols.finishTime);
@@ -9,7 +9,7 @@ function myFunction() {
   console.log(dataSheet.cells(4, 1));
 }
 
-function debugPrint() {
+function debugPrint_02() {
   const dataSheet = new DataSheet();
   const rows   = dataSheet.rows;
   const cols   = dataSheet.cols;
@@ -23,18 +23,10 @@ function debugPrint() {
 /**
  * テスト
  */
-function testMode_ByDate() {
+function testMode_ByDates() {
   const days = [
-    // '2021/01/10 00:00:00',
-    // '2021/01/11 00:00:00',
-    // '2021/01/12 00:00:00',
-    // '2021/01/13 00:00:00',
-    // '2021/01/14 00:00:00',
-    // '2021/01/15 00:00:00',
-    '2021/01/16 00:00:00',
-    '2021/01/17 00:00:00',
-    '2021/01/18 00:00:00',
-    '2021/01/19 00:00:00',
+    // '2021/02/10 00:00:00',
+    '2021/02/11 00:00:00',
   ]
 
   // 関数を定義
