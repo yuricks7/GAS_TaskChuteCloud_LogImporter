@@ -142,36 +142,3 @@ function scheduleReRun_() {
   const trigger = new NextTrigger(ExportWithoutUi.name, 3);
   trigger.build();
 }
-
-function test() {
-  const arr01 = [
-    'yeah',
-    'fooo',
-    '',
-    'omg',
-    '',
-  ];
-
-  console.log(countBlanks(arr01)); // カウントは出来てる
-
-  const arr02 = [
-    true,
-    '',
-    false,
-    true,
-    '',
-  ];
-
-  console.log(countBlanks(arr02));
-}
-
-/**
- * 空要素を数える
- * 
- * @param {Array}
- * 
- * @return {number}
- */
-function countBlanks(arr) {
-  return arr.filter(function(element) { return element === '' }).length;
-}
