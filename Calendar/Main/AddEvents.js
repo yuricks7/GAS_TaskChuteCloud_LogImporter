@@ -71,8 +71,10 @@ function ExportToCalendar() {
   const arr2d = transpose_([results]);
   dataSheet.sheet.getRange(rows.firstData,  cols.isCopied, results.length, 1).setValues(arr2d);
 
-  // 次のトリガーを設定しておく
-  if (dataSheet.rows.lastData - 3 - 1 > results.length) scheduleReRun_();
+  // // 次のトリガーを設定しておく
+  // if (dataSheet.rows.lastData - 3 - 1 > results.length) scheduleReRun_(); // 実行できてない（UI使ってるから？）
+  // // このコンテキストから SpreadsheetApp.getUi() を呼び出せません
+  // //   at ExportToCalendar(Calendar/Main/AddEvents:11)
 
   // 完了表示
   popUp.printFinished(htmlSrc.path.finished);

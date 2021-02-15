@@ -3,6 +3,16 @@
   <head>
     <base target="_top">
     <?!= HtmlService.createHtmlOutputFromFile('CSV/Sub/Modal/client/css').getContent(); ?>
+  </head>
+
+  <body>
+    <form id='myForm'>
+      <input name="myFile" type="file" />
+      <button onclick="csvUpload(this.parentNode);">インポート</button> 
+    </form>
+
+    <div id='message'></div>
+
     <script>
       /**
        * アップロードボタンが押された時の処理
@@ -32,16 +42,6 @@
         alert('インポートに失敗しました…');
         google.script.host.close();
       }
-
     </script>
-  </head>
-
-  <body>
-    <form id='myForm'>
-      <input name="myFile" type="file" />
-      <button onclick="csvUpload(this.parentNode);">インポート</button> 
-    </form>
-
-    <div id='message'></div>
  </body>
 </html>
