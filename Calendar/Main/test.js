@@ -25,15 +25,15 @@ function debugPrint_02() {
  */
 function testMode_ByDates() {
   const days = [
-    // '2021/02/10 00:00:00',
-    '2021/02/11 00:00:00',
+    '2021/02/15',
+    '2021/02/16',
   ]
 
   // 関数を定義
   function deleteAllByDate(name) {
     const logCalendar = new LogCalendar(name);
     for (var i = 0; i < days.length; i++) {
-      logCalendar.deleteAllByDate(days[i]);
+      logCalendar.deleteAllByDate(days[i] + ' ' + '00:00:00');
     }
   }
 

@@ -32,17 +32,41 @@ function exportToCalendar(canDraw) {
   const dataSheet = new DataSheet();
   const rows   = dataSheet.rows;
   const cols   = dataSheet.cols;
+
+  // 転記
+  var results = transport_(dataSheet, timer);
+
+  // 今回の結果を記録
+  const arr2d = transpose_([results]); // →`true/false`ではなく`event id`の方が良いかも
+  dataSheet.sheet.getRange(rows.firstData,  cols.isCopied, results.length, 1).setValues(arr2d);
+
+  // 次のトリガーを設定しておく
+  if (dataSheet.rows.lastData - 3 - 1 > results.length) scheduleReRun_();
+
+  // 完了表示
+  if (canDraw) popUp.printFinished(htmlSrc.path.finished);
+}
+
+/**
+ * シートのデータをカレンダーに転記
+ * 
+ * - 【note】  
+ *   - 1度に転記する数が多いとサーバーエラーで止められることがあるため、
+ *     途中終了しないように`try~catch構文`の中で処理する
+ *
+ * @param {DataSheet} dataSheet 元データ
+ * @param {Timer}     timer     実行時間の管理用
+ *
+ * @return {[[]]} シート記録用のデータ
+ */
+function transport_(dataSheet, timer) {
+  const rows   = dataSheet.rows;
+  const cols   = dataSheet.cols;
   const values = dataSheet.values;
 
   const actionLog = new LogCalendar('行動ログ');
   const  sleepLog = new LogCalendar('睡眠ログ');
 
-  // シートのデータをカレンダーに転記
-  //
-  // @note
-  //   1度に転記する数が多いとサーバーエラーで止められることがあるため、
-  //   途中終了しないようにtry~catch構文の中で処理する
-  //
   try {
     var results = []; // シート記録用（→`true/false`ではなく`event id`の方が良いかも）
     for (var i = rows.firstData - 1; i < values.length; i++) {
@@ -82,15 +106,7 @@ function exportToCalendar(canDraw) {
 
   }
 
-  // 転記が完了したものは、シートに`true`を入力
-  const arr2d = transpose_([results]);
-  dataSheet.sheet.getRange(rows.firstData,  cols.isCopied, results.length, 1).setValues(arr2d);
-
-  // 次のトリガーを設定しておく
-  if (dataSheet.rows.lastData - 3 - 1 > results.length) scheduleReRun_();
-
-  // 完了表示
-  if (canDraw) popUp.printFinished(htmlSrc.path.finished);
+  return results;
 }
 
 /**
