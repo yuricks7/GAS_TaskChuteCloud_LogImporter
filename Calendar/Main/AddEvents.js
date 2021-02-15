@@ -1,17 +1,32 @@
 /**
  * メイン
  */
-function ExportToCalendar() {
+function ExportWithUi() {
+  exportToCalendar(true);
+}
+
+function ExportWithoutUi() {
+  exportToCalendar(false);
+}
+
+/**
+ * メイン処理
+ * 
+ * @param {boolean} canDraw UIをつけるか（トリガーから実行する時は`false`を選択すること）
+ */
+function exportToCalendar(canDraw) {
   // 時限タイマーをセット
   const timer = new Timer();
   timer.setMax(5.5); // 少し余裕を持って5分半とする
   timer.start();
 
   // 処理中はポップアップでスピナーを表示
-  const ui = SpreadsheetApp.getUi();
-  const popUp   = new ModalPopUp(ui);
-  const htmlSrc = new HtmlSrc();
-  popUp.printProcessing(htmlSrc.path.onOutput);
+  if (canDraw) {
+    const ui = SpreadsheetApp.getUi();
+    const popUp   = new ModalPopUp(ui);
+    const htmlSrc = new HtmlSrc();
+    popUp.printProcessing(htmlSrc.path.onOutput);
+  }
 
   // データを準備
   const dataSheet = new DataSheet();
@@ -71,13 +86,11 @@ function ExportToCalendar() {
   const arr2d = transpose_([results]);
   dataSheet.sheet.getRange(rows.firstData,  cols.isCopied, results.length, 1).setValues(arr2d);
 
-  // // 次のトリガーを設定しておく
-  // if (dataSheet.rows.lastData - 3 - 1 > results.length) scheduleReRun_(); // 実行できてない（UI使ってるから？）
-  // // このコンテキストから SpreadsheetApp.getUi() を呼び出せません
-  // //   at ExportToCalendar(Calendar/Main/AddEvents:11)
+  // 次のトリガーを設定しておく
+  if (dataSheet.rows.lastData - 3 - 1 > results.length) scheduleReRun_();
 
   // 完了表示
-  popUp.printFinished(htmlSrc.path.finished);
+  if (canDraw) popUp.printFinished(htmlSrc.path.finished);
 }
 
 /**
@@ -126,7 +139,7 @@ function transpose_(src) {
  * 3分後に再実行を予約しておく
  */
 function scheduleReRun_() {
-  const trigger = new NextTrigger(ExportToCalendar.name, 3);
+  const trigger = new NextTrigger(ExportWithoutUi.name, 3);
   trigger.build();
 }
 
@@ -140,7 +153,6 @@ function test() {
   ];
 
   console.log(countBlanks(arr01)); // カウントは出来てる
-
 
   const arr02 = [
     true,
