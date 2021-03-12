@@ -33,12 +33,18 @@ function showImportDialog() {
 
 /**
  * シートにデータを貼り付ける
+ * 
+ * @param {object} csvFile フォームから受け取ったCSVファイル
  */
-function uploadProcess(formObject) {
+function uploadProcess(csvFile) {
   // データを取得
-  var formBlob  = formObject.myFile;
-  var csvText   = formBlob.getDataAsString("UTF-16LE"); // 文字コード指定
-  var csvValues = Utilities.parseCsv(csvText, "\t");    // タブ区切り（tsv）
+  var formBlob  = csvFile.myFile;
+  var csvText   = formBlob.getDataAsString('UTF-16LE'); // 文字コード指定
+  var csvValues = Utilities.parseCsv(csvText, '\t');    // タブ区切り（tsv）
+
+  // const delimiter = '\t';
+  // var csvValues = Utilities.parseCsv(csvText, delimiter.charCodeAt(0));
+  // var csvValues = Utilities.parseCsv(csvText, Utilities.newBlob(delimiter).getBytes());
 
   // 貼り付け先を取得
   var dataSheet = new DataSheet();

@@ -23,10 +23,12 @@ function debugPrint_02() {
 /**
  * テスト
  */
-function testMode_ByDates() {
+function deleteLogs_ByDates() {
   const days = [
-    '2021/02/15',
-    '2021/02/16',
+    // '2021/02/27',
+    // '2021/02/28',
+    '2021/03/01',
+    '2021/03/02',
   ]
 
   // 関数を定義
@@ -47,7 +49,7 @@ function testMode_ByDates() {
 /**
  * テスト
  */
-function testMode_All() {
+function deleteLogs_All() {
   // まとめて削除
   new LogCalendar('行動ログ').deleteAll();
   new LogCalendar('睡眠ログ').deleteAll();
